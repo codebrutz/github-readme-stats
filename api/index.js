@@ -1,4 +1,21 @@
 // @ts-check
+import { renderStatsCard } from "../src/cards/stats.js";
+import { guardAccess } from "../src/common/access.js";
+import {
+  CACHE_TTL,
+  resolveCacheSeconds,
+  setCacheHeaders,
+  setErrorCacheHeaders,
+} from "../src/common/cache.js";
+import {
+  MissingParamError,
+  retrieveSecondaryMessage,
+} from "../src/common/error.js";
+import { parseArray, parseBoolean } from "../src/common/ops.js";
+import { renderError } from "../src/common/render.js";
+import { fetchStats } from "../src/fetchers/stats.js";
+import { isLocaleAvailable } from "../src/translations.js";
+
 const REDIS_URL = process.env.KV_REST_API_URL;
 const REDIS_TOKEN = process.env.KV_REST_API_TOKEN;
 
@@ -18,27 +35,11 @@ async function trackRequest(endpoint) {
     });
   } catch (e) {}
 }
-import { renderStatsCard } from "../src/cards/stats.js";
-import { guardAccess } from "../src/common/access.js";
-import {
-  CACHE_TTL,
-  resolveCacheSeconds,
-  setCacheHeaders,
-  setErrorCacheHeaders,
-} from "../src/common/cache.js";
-import {
-  MissingParamError,
-  retrieveSecondaryMessage,
-} from "../src/common/error.js";
-import { parseArray, parseBoolean } from "../src/common/ops.js";
-import { renderError } from "../src/common/render.js";
-import { fetchStats } from "../src/fetchers/stats.js";
-import { isLocaleAvailable } from "../src/translations.js";
 
 // @ts-ignore
 export default async (req, res) => {
+  trackRequest("stats");
   const {
-    trackRequest("stats");
     username,
     hide,
     hide_title,
