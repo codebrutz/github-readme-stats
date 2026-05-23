@@ -5,10 +5,21 @@
       "maxDuration": 10
     }
   },
-  "redirects": [
+  "rewrites": [
     {
       "source": "/",
-      "destination": "https://github.com/anuraghazra/github-readme-stats"
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
   ]
 }
