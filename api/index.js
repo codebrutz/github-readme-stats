@@ -1,5 +1,23 @@
 // @ts-check
+const REDIS_URL = process.env.KV_REST_API_URL;
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN;
 
+async function trackRequest(endpoint) {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    await fetch(`${REDIS_URL}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${REDIS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([
+        ["INCR", `hits:${endpoint}:total`],
+        ["INCR", `hits:${endpoint}:${today}`],
+      ]),
+    });
+  } catch (e) {}
+}
 import { renderStatsCard } from "../src/cards/stats.js";
 import { guardAccess } from "../src/common/access.js";
 import {
@@ -20,6 +38,7 @@ import { isLocaleAvailable } from "../src/translations.js";
 // @ts-ignore
 export default async (req, res) => {
   const {
+    trackRequest("stats");
     username,
     hide,
     hide_title,
