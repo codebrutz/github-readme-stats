@@ -21,7 +21,9 @@ const REDIS_TOKEN = process.env.KV_REST_API_TOKEN;
 
 async function trackRequest(endpoint) {
   try {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Kolkata",
+}).format(new Date());
     await fetch(`${REDIS_URL}/pipeline`, {
       method: "POST",
       headers: {
